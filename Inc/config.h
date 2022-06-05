@@ -46,8 +46,8 @@
 
 // ############################### SERIAL DEBUG ###############################
 
-#define DEBUG_SERIAL_USART3         // right sensor board cable, disable if I2C (nunchuck or lcd) is used!
-#define DEBUG_BAUD       115200     // UART baud rate
+//#define DEBUG_SERIAL_USART3         // right sensor board cable, disable if I2C (nunchuck or lcd) is used!
+#define DEBUG_BAUD       9600     // UART baud rate
 //#define DEBUG_SERIAL_SERVOTERM      // Software for plotting graphs: https://github.com/STMBL/Servoterm-app
 #define DEBUG_SERIAL_ASCII          // "1:345 2:1337 3:0 4:0 5:0 6:0 7:0 8:0\r\n"
 
@@ -55,7 +55,7 @@
 
 // ###### CONTROL VIA UART (serial) ######
 //#define CONTROL_SERIAL_USART2       // left sensor board cable, disable if ADC or PPM is used!
-#define CONTROL_BAUD       19200    // control via usart from eg an Arduino or raspberry
+#define CONTROL_BAUD       9600    // control via usart from eg an Arduino or raspberry
 // for Arduino, use void loop(void){ Serial.write((uint8_t *) &steer, sizeof(steer)); Serial.write((uint8_t *) &speed, sizeof(speed));delay(20); }
 
 // ###### CONTROL VIA RC REMOTE ######
@@ -98,13 +98,7 @@
 #define BEEPS_BACKWARD 1    // 0 or 1
 
 //Turbo boost at high speeds while button1 is pressed:
-//#define ADDITIONAL_CODE \
-if (button1 && speedR > 700) { /* field weakening at high speeds */ \
-  weakl = cmd1 - 700; /* weak should never exceed 400 or 450 MAX!! */ \
-  weakr = cmd1 - 700; } \
-else { \
-  weakl = 0; \
-  weakr = 0; }
+//#define ADDITIONAL_CODE  if (button1 && speedR > 700) { /* field weakening at high speeds */    weakl = cmd1 - 700; /* weak should never exceed 400 or 450 MAX!! */    weakr = cmd1 - 700; }  else {    weakl = 0;    weakr = 0; }
 
 // ###### SIMPLE BOBBYCAR ######
 // for better bobbycar code see: https://github.com/larsmm/hoverboard-firmware-hack-bbcar
@@ -112,30 +106,14 @@ else { \
 // #define SPEED_COEFFICIENT   -1
 // #define STEER_COEFFICIENT   0
 
-// #define ADDITIONAL_CODE \
-if (button1 && speedR < 300) { /* drive backwards */ \
-  speedR = speedR * -0.2f;   \
-  speedL = speedL * -0.2f; } \
-else { \
-  direction = 1; } \
-if (button1 && speedR > 700) { /* field weakening at high speeds */ \
-  weakl = speedR - 600; /* weak should never exceed 400 or 450 MAX!! */ \
-  weakr = speedR - 600; } \
-else { \
-  weakl = 0; \
-  weakr = 0; }
+// #define ADDITIONAL_CODE  if (button1 && speedR < 300) { /* drive backwards */    speedR = speedR * -0.2f;      speedL = speedL * -0.2f; }  else {    direction = 1; }  if (button1 && speedR > 700) { /* field weakening at high speeds */    weakl = speedR - 600; /* weak should never exceed 400 or 450 MAX!! */    weakr = speedR - 600; }  else {    weakl = 0;    weakr = 0; }
 
 // ###### ARMCHAIR ######
 // #define FILTER              0.05
 // #define SPEED_COEFFICIENT   0.5
 // #define STEER_COEFFICIENT   -0.2
 
-// #define ADDITIONAL_CODE if (button1 && scale > 0.8) { /* field weakening at high speeds */ \
-  weakl = speedL - 600; /* weak should never exceed 400 or 450 MAX!! */ \
-  weakr = speedR - 600; } \
-else {\
-  weakl = 0;\
-  weakr = 0;
+// #define ADDITIONAL_CODE if (button1 && scale > 0.8) { /* field weakening at high speeds */    weakl = speedL - 600; /* weak should never exceed 400 or 450 MAX!! */    weakr = speedR - 600; }  else {   weakl = 0;   weakr = 0;
 
 // ############################### VALIDATE SETTINGS ###############################
 
