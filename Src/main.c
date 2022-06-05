@@ -97,6 +97,40 @@ void poweroff() {
     #endif
 }
 
+void set_speed_from_remote(GPIO_TypeDef *port, uint16_t pin1, uint16_t pin2, int16_t *speed_remote)
+{
+ if (HAL_GPIO_ReadPin(port, pin1) == 0 & HAL_GPIO_ReadPin(port, pin2) == 1)
+    {
+      if(*speed_remote < 220)
+      {
+      	(*speed_remote)++;
+      }      
+    } else
+    if (HAL_GPIO_ReadPin(port, pin1) == 1 & HAL_GPIO_ReadPin(port, pin2) == 0)
+    {      
+      if(*speed_remote < 1000)
+      {
+      	(*speed_remote)++;
+      }
+    } else
+    if (HAL_GPIO_ReadPin(port, pin1) == 0 & HAL_GPIO_ReadPin(port, pin2) == 0)
+    {            
+      if(*speed_remote > -200)
+      {
+      	(*speed_remote)--;
+      }
+    } 
+    if (HAL_GPIO_ReadPin(port, pin1) == 1 & HAL_GPIO_ReadPin(port, pin2) == 1)
+    {
+      if(*speed_remote > 0 )
+        (*speed_remote)--;
+      else 
+        (*speed_remote)++;
+    } 
+}
+
+int16_t speed_remote_right =0;
+int16_t speed_remote_left =0;
 
 int main(void) {
   HAL_Init();
@@ -187,7 +221,36 @@ int main(void) {
   float board_temp_deg_c;
 
   enable = 1;  // enable motors
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_NOPULL;
+ GPIO_InitStruct.Pin = GPIO_PIN_2;
+ GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);  
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, 1);
+  
+   GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_NOPULL;
+ GPIO_InitStruct.Pin = GPIO_PIN_3;
+ GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);  
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, 1);
+  
+    GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_NOPULL;
+ GPIO_InitStruct.Pin = GPIO_PIN_10;
+ GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);  
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 1);
+  
+   GPIO_InitStruct.Pull = GPIO_PULLUP; //GPIO_NOPULL;
+ GPIO_InitStruct.Pin = GPIO_PIN_11;
+ GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);  
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 1);
+  
   while(1) {
     HAL_Delay(DELAY_IN_MAIN_LOOP); //delay in ms
 
@@ -235,9 +298,9 @@ int main(void) {
 #endif
 
     #ifdef CONTROL_MOTOR_TEST
-      if (motor_test_direction == 1) cmd2 += 1;
-      else cmd2 -= 1;
-      if (abs(cmd2) > CONTROL_MOTOR_TEST_MAX_SPEED) motor_test_direction = -motor_test_direction;
+      //if (motor_test_direction == 1) cmd2 += 1;
+      //else cmd2 -= 1;
+      //if (abs(cmd2) > CONTROL_MOTOR_TEST_MAX_SPEED) motor_test_direction = -motor_test_direction;
 
       timeout = 0;
     #endif
@@ -251,7 +314,16 @@ int main(void) {
     speedR = CLAMP(speed * SPEED_COEFFICIENT -  steer * STEER_COEFFICIENT, -1000, 1000);
     speedL = CLAMP(speed * SPEED_COEFFICIENT +  steer * STEER_COEFFICIENT, -1000, 1000);
 
-
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    speedR = 0;
+    speedL = 0;
+    
+    set_speed_from_remote(GPIOA, GPIO_PIN_2, GPIO_PIN_3, &speed_remote_right);
+    set_speed_from_remote(GPIOB, GPIO_PIN_10, GPIO_PIN_11, &speed_remote_left);
+    
+	speedR = speed_remote_right;
+    speedL = speed_remote_left;
     #ifdef ADDITIONAL_CODE
       ADDITIONAL_CODE;
     #endif
